@@ -4,17 +4,15 @@
       <v-card-title> Chamber Selection </v-card-title>
       <v-card-actions>
         <v-row>
-          <v-col sm="10">
+          <v-col sm="4">
             <v-autocomplete
-                v-model="selectedChambers"
-                :items="chambers"
+                v-model="selectedChamber"
+                :items="chambers.name"
                 hide-selected
-                deletable-chips
                 chips
-                label="Select the Chambers"
+                label="Select the Chamber"
                 solo
                 clearable
-                multiple
             ></v-autocomplete>
           </v-col>
           <v-col >
@@ -27,29 +25,56 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "FEBControl",
 
   data: () => ({
-    selectedChambers: [],
-    chambers: ["Chamber 1",
-               "Chamber 2",
-               "Chamber 3",
-               "Chamber 4",
-               "Chamber 5",
-               "Chamber 6"
-                ],
-    loadingChambers: false
-
+    selectedChamber: null,
+    chambers: {name: [], id: []},
+    loadingChambers: false,
+    errors: false
   }),
 
   methods: {
     loadChambers () {
       this.loadingChambers = true
-      console.log(this.selectedChambers)
-      setTimeout(() => (this.loadingChambers = false), 2000)
+      let index = this.chambers.name.indexOf(this.selectedChamber)
+      let id = this.chambers.id[index]
+      axios
+            .get("http://rpcos4ph2db.web.cern.ch/testdb/" + id)
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(error => {
+              console.log(error);
+            })
+            .finally(() => {
+              this.loadingChambers = false;
+            })
     }
-  }
+  },
+
+  mounted: function () {
+    var DBurl = "http://rpcos4ph2db.web.cern.ch/testdb/_partition/chamber/_design/chambers_name/_view/all";
+    this.loadingChambers = true;
+    axios
+        .get(DBurl)
+        .then(response => {
+          var chambers = response.data.rows;
+          for (var c in chambers){
+            this.chambers.id.push(chambers[c].id), this.chambers.name.push(chambers[c].value.name);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          this.errors = true;
+        })
+        .finally(() => {
+          this.loadingChambers = false;
+        });
+    }
 
 }
 </script>
