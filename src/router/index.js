@@ -48,6 +48,11 @@ Vue.use(VueRouter)
   name: '404',
   component: () => import(/* webpackChunkName: "about" */ '../views/Page404.vue')
 },
+{
+  path: '/febcontrol',
+  name: 'FEB Control',
+  component: () => import(/* webpackChunkName: "about" */ '../views/FEBControl.vue')
+},
 ]
 
 const router = new VueRouter({

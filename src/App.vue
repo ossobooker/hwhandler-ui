@@ -16,14 +16,7 @@
           <router-view />
         </keep-alive>
     </v-main>
-<!-- 
-    <v-footer color="teal" app>
-      <span class="white--text">Hardware Handler - RPC Phase-2</span>
-      <v-spacer />
-
-      <BottonLogSheet />
-      
-    </v-footer> -->
+    
   </v-app>
 </template>
 
